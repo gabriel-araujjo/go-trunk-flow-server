@@ -17,6 +17,8 @@ jobs:
       - uses: actions/checkout@v3
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v3
+        with:
+          args: --build-tags dev
 
   test:
     strategy:
@@ -25,8 +27,6 @@ jobs:
         go: ["1.18"]
     runs-on: ${{ matrix.os }}
     timeout-minutes: 10
-    permissions:
-      pull-requests: write
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-go@v3
@@ -36,15 +36,5 @@ jobs:
       - name: "test"
         run: |
           go test -tags dev -cover -coverprofile coverage.txt -race -v ./...
-
-      - name: "pull request comment"
-        if: matrix.os == 'ubuntu-latest'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          git fetch origin main
-          go get github.com/johejo/go-cover-view
-          go install github.com/johejo/go-cover-view
-          go-cover-view -ci github-actions -git-diff-base origin/main
 
       - uses: codecov/codecov-action@v3
