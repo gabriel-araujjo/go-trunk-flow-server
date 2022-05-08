@@ -15,8 +15,10 @@ func main() {
 	r := chi.NewRouter()
 
 	hello := controller.NewHelloController()
+	bye := controller.NewByeController()
 
 	r.Get("/hello", hello.Hello)
+	r.Get("/bye", bye.Bye)
 	r.NotFound(util.NotFound)
 
 	f, _ := json.Marshal(features.Features)
